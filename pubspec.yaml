@@ -1,0 +1,16 @@
+name: speakup_ai_th3
+description: "Ứng dụng luyện phát âm tiếng Anh AI và theo dõi kỷ luật học tập - Bài tập thực hành 3 (TH3) Nhóm 16"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  test: ^1.24.0
