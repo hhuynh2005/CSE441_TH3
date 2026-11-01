@@ -125,9 +125,9 @@ class _WaveformVisualizerWidgetState extends State<WaveformVisualizerWidget> {
             : Colors.grey.shade300);
 
     final Color bgColor = mode == WaveformDisplayMode.recording
-        ? Colors.red.shade50.withOpacity(0.6)
+        ? Colors.red.shade50.withValues(alpha: 0.6)
         : mode == WaveformDisplayMode.playback
-            ? Colors.blue.shade50.withOpacity(0.5)
+            ? Colors.blue.shade50.withValues(alpha: 0.5)
             : Colors.grey.shade50;
 
     final Color borderColor = mode == WaveformDisplayMode.recording
@@ -149,7 +149,7 @@ class _WaveformVisualizerWidgetState extends State<WaveformVisualizerWidget> {
         boxShadow: mode == WaveformDisplayMode.recording
             ? [
                 BoxShadow(
-                  color: Colors.red.withOpacity(0.12),
+                  color: Colors.red.withValues(alpha: 0.12),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 )
