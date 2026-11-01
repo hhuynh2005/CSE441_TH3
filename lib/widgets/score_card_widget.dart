@@ -123,7 +123,7 @@ class _SubScoreRow extends StatelessWidget {
               value: score / 100,
               minHeight: 8,
               color: _color,
-              backgroundColor: _color.withOpacity(0.15),
+              backgroundColor: _color.withValues(alpha: 0.15),
             ),
           ),
         ),
