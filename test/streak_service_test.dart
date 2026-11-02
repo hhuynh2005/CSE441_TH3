@@ -243,5 +243,86 @@ void main() {
 
       expect(notificationService.notificationHistory.isNotEmpty, isTrue);
     });
+
+    test('TC-12 (Đối soát Ma trận TC-02 trong KICH_BAN_KIEM_THU_TH3.md): Học Ngày 1, Ngày 2, bỏ ngày 3 có Freeze, ngày 4 học tiếp', () {
+      // 1. Ngày 1: Bắt đầu học -> Streak = 1
+      var user = UserProgressModel(
+        userId: 'user_001',
+        displayName: 'Nguyễn Văn Huỳnh',
+        currentStreak: 0,
+        streakFreezeCount: 1,
+        lastPracticeDate: null,
+      );
+
+      var r1 = streakService.recordPracticeSession(
+        current: user,
+        sessionMinutes: 10,
+        wordsCount: 5,
+        practiceTime: DateTime(2026, 11, 1),
+      );
+      expect(r1.updatedProgress.currentStreak, equals(1));
+
+      // 2. Ngày 2: Học tiếp liền kề -> Streak = 2
+      var r2 = streakService.recordPracticeSession(
+        current: r1.updatedProgress,
+        sessionMinutes: 10,
+        wordsCount: 5,
+        practiceTime: DateTime(2026, 11, 2),
+      );
+      expect(r2.updatedProgress.currentStreak, equals(2));
+      expect(r2.updatedProgress.streakFreezeCount, equals(1));
+
+      // 3. Ngày 3: Bỏ lỡ. Ngày 4 (11/4): Quay lại học, khiên Freeze tự động kích hoạt bảo vệ
+      var r3 = streakService.recordPracticeSession(
+        current: r2.updatedProgress,
+        sessionMinutes: 15,
+        wordsCount: 8,
+        practiceTime: DateTime(2026, 11, 4),
+      );
+      expect(r3.wasFreezeUsed, isTrue);
+      expect(r3.updatedProgress.streakFreezeCount, equals(0)); // Dùng hết 1 khiên
+      expect(r3.updatedProgress.currentStreak, equals(3)); // Giữ và tăng lên 3
+    });
+
+    test('TC-13 (Đối soát Ma trận TC-03 trong KICH_BAN_KIEM_THU_TH3.md): Đặt mục tiêu 15 phút, học 3 phiên 5 phút đạt 100%', () {
+      var user = UserProgressModel(
+        userId: 'user_001',
+        displayName: 'Nguyễn Văn Huỳnh',
+        dailyGoalMinutes: 15,
+        todayMinutesLearned: 0,
+      );
+
+      // Phiên 1: 5 phút -> Chưa đạt (33.3%)
+      var r1 = streakService.recordPracticeSession(
+        current: user,
+        sessionMinutes: 5,
+        wordsCount: 3,
+        practiceTime: DateTime(2026, 11, 1),
+      );
+      expect(r1.updatedProgress.isDailyGoalCompleted, isFalse);
+      expect(r1.updatedProgress.todayMinutesLearned, equals(5));
+
+      // Phiên 2: 5 phút nữa -> Tổng 10 phút, Chưa đạt (66.7%)
+      var r2 = streakService.recordPracticeSession(
+        current: r1.updatedProgress,
+        sessionMinutes: 5,
+        wordsCount: 3,
+        practiceTime: DateTime(2026, 11, 1),
+      );
+      expect(r2.updatedProgress.isDailyGoalCompleted, isFalse);
+      expect(r2.updatedProgress.todayMinutesLearned, equals(10));
+
+      // Phiên 3: 5 phút nữa -> Tổng 15 phút, Đạt 100% mục tiêu ngày!
+      var r3 = streakService.recordPracticeSession(
+        current: r2.updatedProgress,
+        sessionMinutes: 5,
+        wordsCount: 4,
+        practiceTime: DateTime(2026, 11, 1),
+      );
+      expect(r3.isGoalAchievedThisSession, isTrue);
+      expect(r3.updatedProgress.isDailyGoalCompleted, isTrue);
+      expect(r3.updatedProgress.todayMinutesLearned, equals(15));
+      expect(r3.updatedProgress.goalCompletionPercentage, equals(100.0));
+    });
   });
 }
