@@ -52,6 +52,22 @@ class DayProgressStatus {
   });
 }
 
+class MilestoneTarget {
+  final int targetDays;
+  final int remainingDays;
+  final double progressPercent;
+  final String rewardTitle;
+  final String icon;
+
+  const MilestoneTarget({
+    required this.targetDays,
+    required this.remainingDays,
+    required this.progressPercent,
+    required this.rewardTitle,
+    required this.icon,
+  });
+}
+
 class StreakService {
   /// Cập nhật chuỗi ngày và tiến độ học tập sau một phiên luyện phát âm
   StreakUpdateResult recordPracticeSession({
@@ -285,5 +301,71 @@ class StreakService {
     }
 
     return weekStatus;
+  }
+
+  /// Xác định mốc chuỗi kế tiếp cần chinh phục và số ngày còn lại
+  MilestoneTarget getNextMilestoneTarget(int currentStreak) {
+    const milestones = [3, 7, 14, 30, 60, 100];
+    int target = 100;
+    String reward = 'Cúp Huyền Thoại';
+    String icon = '🏆';
+
+    for (final m in milestones) {
+      if (currentStreak < m) {
+        target = m;
+        if (m == 3) {
+          reward = 'Huy Hiệu Khởi Đầu';
+          icon = '🌱';
+        } else if (m == 7) {
+          reward = 'Huy Hiệu 1 Tuần Kỷ Luật';
+          icon = '🔥';
+        } else if (m == 14) {
+          reward = 'Huy Hiệu 2 Tuần Kiên Trì';
+          icon = '💎';
+        } else if (m == 30) {
+          reward = 'Vương Miện 1 Tháng';
+          icon = '👑';
+        } else if (m == 60) {
+          reward = 'Khiên Kim Cương';
+          icon = '🛡️';
+        }
+        break;
+      }
+    }
+
+    final remaining = target - currentStreak;
+    final pct = (currentStreak / target) * 100.0;
+    return MilestoneTarget(
+      targetDays: target,
+      remainingDays: remaining > 0 ? remaining : 0,
+      progressPercent: pct.clamp(0.0, 100.0),
+      rewardTitle: reward,
+      icon: icon,
+    );
+  }
+
+  /// Khôi phục chuỗi ngày đã mất khi học viên vượt qua thử thách bù bài học
+  UserProgressModel recoverBrokenStreak(
+    UserProgressModel current, {
+    required int originalStreak,
+  }) {
+    final restoredStreak = originalStreak > 0 ? originalStreak : 1;
+    final longest = restoredStreak > current.longestStreak ? restoredStreak : current.longestStreak;
+    return current.copyWith(
+      currentStreak: restoredStreak,
+      longestStreak: longest,
+      recoveredStreakCount: current.recoveredStreakCount + 1,
+    );
+  }
+
+  /// Tính tỷ lệ % duy trì kỷ luật trong chu kỳ (mặc định 30 ngày gần nhất)
+  double calculateDisciplineConsistencyRate(
+    UserProgressModel progress, {
+    int periodDays = 30,
+  }) {
+    if (periodDays <= 0 || progress.practiceDatesHistory.isEmpty) return 0.0;
+    final count = progress.practiceDatesHistory.length;
+    final rate = (count / periodDays) * 100.0;
+    return rate > 100.0 ? 100.0 : double.parse(rate.toStringAsFixed(1));
   }
 }

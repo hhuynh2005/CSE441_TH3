@@ -6,6 +6,13 @@
 
 import '../models/user_progress_model.dart';
 
+enum NotificationPriority {
+  low,
+  normal,
+  high,
+  urgent,
+}
+
 class NotificationSchedule {
   final int hour;
   final int minute;
@@ -31,7 +38,8 @@ class NotificationMessage {
   final String title;
   final String body;
   final DateTime sentAt;
-  final String type; // DAILY_REMINDER, STREAK_WARNING, MILESTONE, GOAL_COMPLETED
+  final String type; // DAILY_REMINDER, STREAK_WARNING, MILESTONE, GOAL_COMPLETED, WEEKEND_CHALLENGE
+  final NotificationPriority priority;
 
   NotificationMessage({
     required this.id,
@@ -39,6 +47,7 @@ class NotificationMessage {
     required this.body,
     required this.sentAt,
     required this.type,
+    this.priority = NotificationPriority.normal,
   });
 }
 
@@ -80,6 +89,7 @@ class DailyNotificationService {
       title: '🚨 Cứu Chuỗi Streak $currentStreak Ngày!',
       body: msg,
       type: 'STREAK_WARNING',
+      priority: NotificationPriority.urgent,
     );
 
     return msg;
@@ -106,8 +116,33 @@ class DailyNotificationService {
       title: '🎉 Mốc Kỷ Lục Chuỗi Ngày!',
       body: message,
       type: 'MILESTONE',
+      priority: NotificationPriority.high,
     );
 
+    return message;
+  }
+
+  /// Tạo thông báo chúc mừng hoàn thành mục tiêu ngày
+  String createGoalAchievedNotification(int minutesLearned) {
+    final message = '🌟 Xuất sắc! Bạn đã hoàn thành trọn vẹn mục tiêu luyện tập $minutesLearned phút ngày hôm nay!';
+    _recordNotification(
+      title: '🎯 Mục Tiêu Ngày Đã Hoàn Thành!',
+      body: message,
+      type: 'GOAL_COMPLETED',
+      priority: NotificationPriority.high,
+    );
+    return message;
+  }
+
+  /// Tạo thông báo thử thách duy trì chuỗi cuối tuần
+  String createWeekendChallengeNotification() {
+    const message = '🎯 Thử thách cuối tuần: Đừng để thứ Bảy & Chủ Nhật làm gián đoạn chuỗi kỷ luật phát âm của bạn!';
+    _recordNotification(
+      title: '⚡ Thử Thách Kỷ Luật Cuối Tuần',
+      body: message,
+      type: 'WEEKEND_CHALLENGE',
+      priority: NotificationPriority.normal,
+    );
     return message;
   }
 
@@ -128,11 +163,13 @@ class DailyNotificationService {
     required String title,
     required String body,
     String type = 'DAILY_REMINDER',
+    NotificationPriority priority = NotificationPriority.normal,
   }) {
     return _recordNotification(
       title: title,
       body: body,
       type: type,
+      priority: priority,
     );
   }
 
@@ -140,6 +177,7 @@ class DailyNotificationService {
     required String title,
     required String body,
     required String type,
+    NotificationPriority priority = NotificationPriority.normal,
   }) {
     final notification = NotificationMessage(
       id: 'noti_${DateTime.now().millisecondsSinceEpoch}',
@@ -147,6 +185,7 @@ class DailyNotificationService {
       body: body,
       sentAt: DateTime.now(),
       type: type,
+      priority: priority,
     );
     _notificationHistory.insert(0, notification);
     return notification;

@@ -105,6 +105,64 @@ class _ProgressDashboardViewState extends State<ProgressDashboardView> {
     }
   }
 
+  void _simulateStreakRecovery() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.healing, color: Colors.deepOrange),
+            SizedBox(width: 8),
+            Text('Giải Cứu Chuỗi Streak'),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '🎯 Thử Thách Cứu Chuỗi:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 6),
+            Text(
+              'Nếu chẳng may quên học khiến chuỗi bị reset, bạn có thể thực hiện bài kiểm tra phát âm đặc biệt (hoàn thành 5 câu phát âm chuẩn ≥ 85 điểm) để khôi phục lại chuỗi ngày học của mình!',
+              style: TextStyle(fontSize: 13, height: 1.4),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Để sau'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              setState(() {
+                _userProgress = _streakService.recoverBrokenStreak(
+                  _userProgress,
+                  originalStreak: _userProgress.longestStreak,
+                );
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.teal.shade700,
+                  content: Text(
+                    '🎉 Xuất sắc! Bạn đã vượt qua bài test và khôi phục chuỗi ${_userProgress.currentStreak} ngày!',
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.deepOrange),
+            child: const Text('Thực hiện thử thách', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<void> _selectReminderTime() async {
     final picked = await showTimePicker(
       context: context,
@@ -201,6 +259,7 @@ class _ProgressDashboardViewState extends State<ProgressDashboardView> {
   Widget build(BuildContext context) {
     final rank = _streakService.getDisciplineRank(_userProgress.currentStreak);
     final weekStatus = _streakService.getWeeklyCalendarStatus(_userProgress);
+    final milestone = _streakService.getNextMilestoneTarget(_userProgress.currentStreak);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FD),
@@ -232,23 +291,31 @@ class _ProgressDashboardViewState extends State<ProgressDashboardView> {
             Center(child: StreakBadgeWidget(progress: _userProgress)),
             const SizedBox(height: 16),
 
-            // 3. Daily Goal Progress Card
+            // 3. Next Milestone Target Card
+            _buildMilestoneTargetCard(milestone),
+            const SizedBox(height: 16),
+
+            // 4. Daily Goal Progress Card
             _buildDailyGoalCard(),
             const SizedBox(height: 16),
 
-            // 4. Weekly Calendar / Heatmap
+            // 5. Weekly Calendar / Heatmap
             _buildWeeklyCalendarCard(weekStatus),
             const SizedBox(height: 16),
 
-            // 5. Overall Analytics Grid
+            // 6. Overall Analytics Grid
             _buildAnalyticsGrid(),
             const SizedBox(height: 16),
 
-            // 6. Daily Notification & Smart Reminder Settings
+            // 7. Streak Challenge & Recovery Card
+            _buildRecoveryCard(),
+            const SizedBox(height: 16),
+
+            // 8. Daily Notification & Smart Reminder Settings
             _buildNotificationSettingsCard(),
             const SizedBox(height: 24),
 
-            // 7. Action Button
+            // 9. Action Button
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -326,6 +393,75 @@ class _ProgressDashboardViewState extends State<ProgressDashboardView> {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMilestoneTargetCard(MilestoneTarget milestone) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.purple.shade50, Colors.deepPurple.shade50],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.deepPurple.shade100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Text(milestone.icon, style: const TextStyle(fontSize: 20)),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Mốc Tiếp Theo: ${milestone.targetDays} Ngày',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple.shade900,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple.shade100,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  'Còn ${milestone.remainingDays} ngày',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple.shade800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: milestone.progressPercent / 100.0,
+              minHeight: 8,
+              backgroundColor: Colors.deepPurple.shade100,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple.shade400),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Phần thưởng: ${milestone.rewardTitle}',
+            style: TextStyle(fontSize: 12, color: Colors.deepPurple.shade700),
           ),
         ],
       ),
@@ -553,6 +689,63 @@ class _ProgressDashboardViewState extends State<ProgressDashboardView> {
           color: Colors.cyan.shade700,
         ),
       ],
+    );
+  }
+
+  Widget _buildRecoveryCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.deepOrange.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.healing, color: Colors.deepOrange, size: 26),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Thử Thách Giải Cứu Chuỗi',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'Làm bài test phát âm bù nếu lỡ đứt chuỗi',
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+            onPressed: _simulateStreakRecovery,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange.shade100,
+              foregroundColor: Colors.deepOrange.shade800,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: const Text('Thử ngay', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+          ),
+        ],
+      ),
     );
   }
 

@@ -324,5 +324,62 @@ void main() {
       expect(r3.updatedProgress.todayMinutesLearned, equals(15));
       expect(r3.updatedProgress.goalCompletionPercentage, equals(100.0));
     });
+
+    test('TC-14: Tính toán mục tiêu mốc tiếp theo (Milestone Target)', () {
+      final target5 = streakService.getNextMilestoneTarget(5);
+      expect(target5.targetDays, equals(7));
+      expect(target5.remainingDays, equals(2));
+      expect(target5.progressPercent, closeTo(71.4, 0.1));
+
+      final target10 = streakService.getNextMilestoneTarget(10);
+      expect(target10.targetDays, equals(14));
+      expect(target10.remainingDays, equals(4));
+
+      final target25 = streakService.getNextMilestoneTarget(25);
+      expect(target25.targetDays, equals(30));
+      expect(target25.remainingDays, equals(5));
+    });
+
+    test('TC-15: Khôi phục chuỗi sau thử thách bù bài học (Streak Recovery)', () {
+      final brokenUser = UserProgressModel(
+        userId: 'user_001',
+        displayName: 'Nguyễn Văn Huỳnh',
+        currentStreak: 1, // Đã bị reset về 1
+        longestStreak: 15,
+        recoveredStreakCount: 0,
+      );
+
+      final recovered = streakService.recoverBrokenStreak(
+        brokenUser,
+        originalStreak: 15,
+      );
+
+      expect(recovered.currentStreak, equals(15));
+      expect(recovered.recoveredStreakCount, equals(1));
+    });
+
+    test('TC-16: Tính toán tỷ lệ duy trì kỷ luật (Discipline Consistency Rate)', () {
+      final user = UserProgressModel(
+        userId: 'user_001',
+        displayName: 'Nguyễn Văn Huỳnh',
+        practiceDatesHistory: List.generate(15, (i) => '2026-10-${(i + 1).toString().padLeft(2, '0')}'),
+      );
+
+      final rate = streakService.calculateDisciplineConsistencyRate(user, periodDays: 30);
+      expect(rate, equals(50.0));
+      expect(user.consistencyRateInMonth, equals(50.0));
+    });
+
+    test('TC-17: Thông báo thử thách cuối tuần và hoàn thành mục tiêu ngày', () {
+      final weekendMsg = notificationService.createWeekendChallengeNotification();
+      expect(weekendMsg.contains('cuối tuần'), isTrue);
+
+      final goalMsg = notificationService.createGoalAchievedNotification(20);
+      expect(goalMsg.contains('20 phút'), isTrue);
+
+      final latest = notificationService.notificationHistory.first;
+      expect(latest.type, equals('GOAL_COMPLETED'));
+      expect(latest.priority, equals(NotificationPriority.high));
+    });
   });
 }

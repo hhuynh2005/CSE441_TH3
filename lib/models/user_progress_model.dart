@@ -21,6 +21,8 @@ class UserProgressModel {
   final bool isDailyReminderEnabled;
   final int reminderHour;
   final int reminderMinute;
+  final int weeklyStreakCount;
+  final int recoveredStreakCount;
 
   UserProgressModel({
     required this.userId,
@@ -39,6 +41,8 @@ class UserProgressModel {
     this.isDailyReminderEnabled = true,
     this.reminderHour = 20,
     this.reminderMinute = 0,
+    this.weeklyStreakCount = 0,
+    this.recoveredStreakCount = 0,
   });
 
   /// Kiểm tra xem người dùng đã hoàn thành mục tiêu ngày hôm nay chưa
@@ -59,6 +63,13 @@ class UserProgressModel {
     return pct > 100.0 ? 100.0 : double.parse(pct.toStringAsFixed(1));
   }
 
+  /// Tỷ lệ duy trì kỷ luật trong chu kỳ 30 ngày gần nhất (0.0% - 100.0%)
+  double get consistencyRateInMonth {
+    if (practiceDatesHistory.isEmpty) return 0.0;
+    final rate = (practiceDatesHistory.length / 30.0) * 100.0;
+    return rate > 100.0 ? 100.0 : double.parse(rate.toStringAsFixed(1));
+  }
+
   /// Tạo bản sao với các thuộc tính cập nhật (copyWith)
   UserProgressModel copyWith({
     String? userId,
@@ -77,6 +88,8 @@ class UserProgressModel {
     bool? isDailyReminderEnabled,
     int? reminderHour,
     int? reminderMinute,
+    int? weeklyStreakCount,
+    int? recoveredStreakCount,
   }) {
     return UserProgressModel(
       userId: userId ?? this.userId,
@@ -95,6 +108,8 @@ class UserProgressModel {
       isDailyReminderEnabled: isDailyReminderEnabled ?? this.isDailyReminderEnabled,
       reminderHour: reminderHour ?? this.reminderHour,
       reminderMinute: reminderMinute ?? this.reminderMinute,
+      weeklyStreakCount: weeklyStreakCount ?? this.weeklyStreakCount,
+      recoveredStreakCount: recoveredStreakCount ?? this.recoveredStreakCount,
     );
   }
 
@@ -128,6 +143,8 @@ class UserProgressModel {
       isDailyReminderEnabled: map['isDailyReminderEnabled'] ?? true,
       reminderHour: map['reminderHour'] ?? 20,
       reminderMinute: map['reminderMinute'] ?? 0,
+      weeklyStreakCount: map['weeklyStreakCount'] ?? map['weekly_streak_count'] ?? 0,
+      recoveredStreakCount: map['recoveredStreakCount'] ?? map['recovered_streak_count'] ?? 0,
     );
   }
 
@@ -148,6 +165,8 @@ class UserProgressModel {
       'is_daily_reminder_enabled': isDailyReminderEnabled ? 1 : 0,
       'reminder_hour': reminderHour,
       'reminder_minute': reminderMinute,
+      'weekly_streak_count': weeklyStreakCount,
+      'recovered_streak_count': recoveredStreakCount,
     };
   }
 }
