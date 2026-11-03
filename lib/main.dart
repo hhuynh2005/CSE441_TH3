@@ -17,6 +17,7 @@ class SpeakUpAIApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
+        fontFamilyFallback: const ['Noto Sans', 'Roboto', 'Arial Unicode MS', 'sans-serif'],
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF4F46E5),
           brightness: Brightness.light,
