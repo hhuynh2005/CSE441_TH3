@@ -220,3 +220,34 @@ flutter test test/streak_service_test.dart
 ```bash
 dart analyze
 ```
+
+### 5. Chạy ứng dụng trên Trình duyệt Web (Chrome)
+```bash
+# Cách 1: Biên dịch và chạy local web server cổng 8080 (Khuyên dùng)
+flutter build web
+python -m http.server 8080 --directory build/web
+# Mở trình duyệt truy cập: http://localhost:8080/
+
+# Cách 2: Chạy trực tiếp qua Flutter CLI
+flutter run -d chrome
+```
+
+---
+
+## 🌟 8. TÍNH NĂNG NÂNG CAO MỚI CẬP NHẬT
+1. **Kho từ vựng phong phú 40+ bài luyện:**
+   - 🔤 **Âm vị dễ nhầm (10 từ):** `cat`, `cats`, `ship`, `sheep`, `sheet`, `think`, `that`, `water`, `dogs`, `vision`.
+   - 💼 **Giao tiếp công sở (8 từ):** `schedule`, `colleague`, `presentation`, `negotiation`, `deadline`, `developer`, `management`, `experience`.
+   - ✈️ **Du lịch & Khách sạn (8 từ):** `passport`, `reservation`, `itinerary`, `destination`, `departure`, `luggage`, `boarding`, `restaurant`.
+   - 💻 **Công nghệ & Kỹ thuật (8 từ):** `artificial`, `intelligence`, `algorithm`, `database`, `architecture`, `cybersecurity`, `cloud`, `application`.
+   - 🗣️ **Mẫu câu giao tiếp hoàn chỉnh (6 câu):** `practice makes perfect`, `nice to meet you`, `could you repeat that`, `how can I help you`, `speak english every day`, `artificial intelligence is powerful`.
+2. **Thêm từ mới tùy chỉnh linh hoạt (+ Thêm từ / câu mới):** Cho phép giảng viên và người học thêm bất kỳ từ hoặc câu nào để luyện tập tức thì.
+3. **Phát âm người bản xứ đa ngữ điệu (US & UK):** Sử dụng hệ thống âm thanh người thật CDN Youdao kết hợp Web Speech Synthesis tự động phục hồi.
+4. **Ghi âm Micro và Phát lại giọng nói thực tế:** Lưu tệp âm thanh nhị phân MediaRecorder WebM/Opus, người học nhấn Play để nghe lại chính giọng mình.
+5. **Chế độ kiểm thử AI linh hoạt (Dynamic AI Scoring & Test Scenarios):**
+   - 🎙️ **Microphone thật (Web STT):** Chấm điểm thời gian thực theo giọng nói người dùng. Nếu im lặng sẽ nhận 0 điểm kèm cảnh báo.
+   - 🎯 **Giả lập: Phát âm chuẩn (95-100 điểm):** Kiểm tra trạng thái xuất sắc và màu xanh âm vị.
+   - ⚠️ **Giả lập: Bỏ sót âm đuôi (70-75 điểm):** Kiểm tra thuật toán phát hiện nuốt phụ âm cuối và đề xuất bài học bổ trợ.
+   - 🔀 **Giả lập: Sai nguyên âm (55-65 điểm):** Kiểm tra thuật toán phát hiện nhầm lẫn nguyên âm và hướng dẫn khẩu hình miệng.
+   - 🔇 **Giả lập: Im lặng / Không có âm thanh (0 điểm):** Kiểm tra phản hồi khi không thu được tiếng.
+
