@@ -26,7 +26,9 @@
   <link rel="manifest" href="manifest.json">
 
   <script>
-    // 1. Phát âm thanh mẫu chuẩn người bản xứ (Web Speech Synthesis - TTS)
+    // ==============================================================================
+    // 1. PHÁT ÂM THANH MẪU CHUẨN NGƯỜI BẢN XỨ (WEB SPEECH SYNTHESIS TTS)
+    // ==============================================================================
     window.speakWord = function(text, lang) {
       if (!('speechSynthesis' in window)) {
         console.warn('Trình duyệt không hỗ trợ Web Speech Synthesis API');
@@ -39,51 +41,81 @@
         utterance.rate = 0.85; // Tốc độ chuẩn cho học viên luyện nghe
         utterance.pitch = 1.0;
         window.speechSynthesis.speak(utterance);
+        console.log('Speaking word:', text, 'with accent:', utterance.lang);
       } catch (e) {
         console.error('Lỗi khi phát âm từ mẫu:', e);
       }
     };
 
-    // 2. Thu âm trực tiếp từ Microphone qua Web MediaRecorder & Phát lại
+    // ==============================================================================
+    // 2. THU ÂM VÀ PHÁT LẠI GIỌNG NÓI HỌC VIÊN QUA WEB MEDIARECORDER API
+    // ==============================================================================
+    let mediaStream = null;
     let mediaRecorder = null;
     let audioChunks = [];
     let audioBlob = null;
+    let recordedAudioUrl = null;
     let currentPlaybackAudio = null;
 
     window.startWebRecording = async function() {
       audioChunks = [];
+      if (currentPlaybackAudio) {
+        currentPlaybackAudio.pause();
+        currentPlaybackAudio = null;
+      }
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           console.warn('Trình duyệt không hỗ trợ truy cập Microphone');
           return;
         }
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
+        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        let mimeType = 'audio/webm';
+        if (typeof MediaRecorder.isTypeSupported === 'function') {
+          if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+            mimeType = 'audio/webm;codecs=opus';
+          } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+            mimeType = 'audio/mp4';
+          }
+        }
+        
+        mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mimeType });
         mediaRecorder.ondataavailable = function(e) {
           if (e.data && e.data.size > 0) {
             audioChunks.push(e.data);
           }
         };
+        
         mediaRecorder.onstop = function() {
-          audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-          if (currentPlaybackAudio) {
-            currentPlaybackAudio.pause();
-            currentPlaybackAudio = null;
+          if (audioChunks.length > 0) {
+            audioBlob = new Blob(audioChunks, { type: mimeType });
+            if (recordedAudioUrl) {
+              URL.revokeObjectURL(recordedAudioUrl);
+            }
+            recordedAudioUrl = URL.createObjectURL(audioBlob);
+            console.log('✅ Thu âm hoàn tất, kích thước:', audioBlob.size, 'bytes, URL:', recordedAudioUrl);
+          }
+          if (mediaStream) {
+            mediaStream.getTracks().forEach(function(track) {
+              track.stop();
+            });
+            mediaStream = null;
           }
         };
-        mediaRecorder.start();
+
+        // Thu thập dữ liệu âm thanh mỗi 200ms
+        mediaRecorder.start(200);
+        console.log('🎤 Bắt đầu thu âm từ Microphone...');
       } catch (err) {
-        console.warn('Chưa cấp quyền Microphone hoặc không tìm thấy thiết bị thu:', err);
+        console.warn('Microphone không sẵn sàng hoặc chưa cấp quyền:', err);
       }
     };
 
     window.stopWebRecording = function() {
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
         try {
           mediaRecorder.stop();
-          mediaRecorder.stream.getTracks().forEach(function(track) {
-            track.stop();
-          });
+          console.log('🛑 Đã dừng thu âm');
         } catch (e) {
           console.error('Lỗi khi dừng thu âm:', e);
         }
@@ -91,19 +123,23 @@
     };
 
     window.playRecordedAudio = function() {
-      if (!audioBlob) {
-        console.warn('Chưa có file thu âm để phát lại');
-        return;
-      }
       try {
         if (currentPlaybackAudio) {
           currentPlaybackAudio.pause();
+          currentPlaybackAudio = null;
         }
-        const audioUrl = URL.createObjectURL(audioBlob);
-        currentPlaybackAudio = new Audio(audioUrl);
-        currentPlaybackAudio.play();
+        if (recordedAudioUrl) {
+          currentPlaybackAudio = new Audio(recordedAudioUrl);
+          currentPlaybackAudio.play().then(function() {
+            console.log('▶️ Đang phát lại giọng thu của học viên');
+          }).catch(function(err) {
+            console.error('Lỗi phát âm thanh:', err);
+          });
+        } else {
+          console.warn('Chưa có tệp thu âm hợp lệ. Đang dùng phản hồi âm mẫu.');
+        }
       } catch (e) {
-        console.error('Lỗi khi phát lại giọng thu:', e);
+        console.error('Lỗi khi phát lại giọng:', e);
       }
     };
 

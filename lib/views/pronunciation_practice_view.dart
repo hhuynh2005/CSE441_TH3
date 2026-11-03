@@ -245,7 +245,8 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
       _playbackProgress = 0.0;
     });
 
-    const int totalSteps = 50;
+    final durationSeconds = _lastRecognitionResult?.recordingDuration.inSeconds ?? 2;
+    final totalSteps = (durationSeconds > 0 ? durationSeconds : 2) * 25;
     int currentStep = 0;
     _playbackTimer?.cancel();
     _playbackTimer = Timer.periodic(const Duration(milliseconds: 40), (timer) {
@@ -260,6 +261,7 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
 
       if (currentStep >= totalSteps) {
         timer.cancel();
+        web_audio.stopRecordedAudio();
         setState(() {
           _isPlayingUserAudio = false;
           _playbackProgress = 1.0;
