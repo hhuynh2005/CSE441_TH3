@@ -10,6 +10,7 @@ import '../services/phoneme_comparison_engine.dart';
 import '../models/pronunciation_result_model.dart';
 import '../widgets/waveform_visualizer.dart';
 import '../widgets/phoneme_feedback_widget.dart';
+import '../services/web_audio_helper.dart' as web_audio;
 
 /// Mục từ vựng luyện tập
 class PracticeItem {
@@ -152,6 +153,7 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
     });
 
     _playbackTimer?.cancel();
+    web_audio.startWebRecording();
     await _speechService.startRecording(enableNoiseFilter: true);
 
     _recordingTimer?.cancel();
@@ -169,6 +171,7 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
 
   Future<void> _stopRecording() async {
     _recordingTimer?.cancel();
+    web_audio.stopWebRecording();
     setState(() {
       _isRecording = false;
       _isProcessingAI = true;
@@ -215,6 +218,7 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
     }
 
     setState(() {});
+    web_audio.speakWord(_currentWord.word, lang: _selectedAccent);
     await _speechService.playNativeAudioSample(
       _currentWord.word,
       accent: _selectedAccent,
@@ -228,12 +232,14 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
   void _togglePlayUserAudio() {
     if (_isPlayingUserAudio) {
       _playbackTimer?.cancel();
+      web_audio.stopRecordedAudio();
       setState(() {
         _isPlayingUserAudio = false;
       });
       return;
     }
 
+    web_audio.playRecordedAudio();
     setState(() {
       _isPlayingUserAudio = true;
       _playbackProgress = 0.0;

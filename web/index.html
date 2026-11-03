@@ -1,19 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -37,6 +24,96 @@
 
   <title>SpeakUp AI - TH3 Nhóm 16</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    // 1. Phát âm thanh mẫu chuẩn người bản xứ (Web Speech Synthesis - TTS)
+    window.speakWord = function(text, lang) {
+      if (!('speechSynthesis' in window)) {
+        console.warn('Trình duyệt không hỗ trợ Web Speech Synthesis API');
+        return;
+      }
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = (lang === 'UK') ? 'en-GB' : 'en-US';
+        utterance.rate = 0.85; // Tốc độ chuẩn cho học viên luyện nghe
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        console.error('Lỗi khi phát âm từ mẫu:', e);
+      }
+    };
+
+    // 2. Thu âm trực tiếp từ Microphone qua Web MediaRecorder & Phát lại
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let audioBlob = null;
+    let currentPlaybackAudio = null;
+
+    window.startWebRecording = async function() {
+      audioChunks = [];
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          console.warn('Trình duyệt không hỗ trợ truy cập Microphone');
+          return;
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.ondataavailable = function(e) {
+          if (e.data && e.data.size > 0) {
+            audioChunks.push(e.data);
+          }
+        };
+        mediaRecorder.onstop = function() {
+          audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          if (currentPlaybackAudio) {
+            currentPlaybackAudio.pause();
+            currentPlaybackAudio = null;
+          }
+        };
+        mediaRecorder.start();
+      } catch (err) {
+        console.warn('Chưa cấp quyền Microphone hoặc không tìm thấy thiết bị thu:', err);
+      }
+    };
+
+    window.stopWebRecording = function() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        try {
+          mediaRecorder.stop();
+          mediaRecorder.stream.getTracks().forEach(function(track) {
+            track.stop();
+          });
+        } catch (e) {
+          console.error('Lỗi khi dừng thu âm:', e);
+        }
+      }
+    };
+
+    window.playRecordedAudio = function() {
+      if (!audioBlob) {
+        console.warn('Chưa có file thu âm để phát lại');
+        return;
+      }
+      try {
+        if (currentPlaybackAudio) {
+          currentPlaybackAudio.pause();
+        }
+        const audioUrl = URL.createObjectURL(audioBlob);
+        currentPlaybackAudio = new Audio(audioUrl);
+        currentPlaybackAudio.play();
+      } catch (e) {
+        console.error('Lỗi khi phát lại giọng thu:', e);
+      }
+    };
+
+    window.stopRecordedAudio = function() {
+      if (currentPlaybackAudio) {
+        currentPlaybackAudio.pause();
+        currentPlaybackAudio = null;
+      }
+    };
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
