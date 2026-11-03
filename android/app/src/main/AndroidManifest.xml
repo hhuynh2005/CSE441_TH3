@@ -1,0 +1,46 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.nhom16.speakup_ai_th3">
+
+    <!-- ============================================================================== -->
+    <!-- CẤU HÌNH QUYỀN TRUY CẬP MICROPHONE & ÂM THANH CHO TH3 (SPEAKUP AI)            -->
+    <!-- Phụ trách: NGUYỄN TRUNG KIÊN (2251172394) - Sprint 1 (Checklist 3)            -->
+    <!-- ============================================================================== -->
+
+    <!-- Quyền thu âm từ Microphone để phân tích âm vị và chấm điểm phát âm -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <!-- Quyền tinh chỉnh cấu hình âm thanh phần cứng (Sample Rate 16kHz, mono) -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!-- Quyền kết nối mạng gửi luồng âm thanh đến Cloud Speech-to-Text API -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Quyền lưu trữ file tạm WAV ghi âm trong bộ nhớ thiết bị -->
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <application
+        android:label="SpeakUp AI"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- Không bỏ qua metadata Flutter -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </application>
+</manifest>
