@@ -812,40 +812,69 @@ class _ProgressDashboardViewState extends State<ProgressDashboardView> {
               ),
             ],
           ),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Bật nhắc nhở hàng ngày', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    const SizedBox(height: 2),
+                    Text('Thông báo lúc ' + _reminderTime.format(context), style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                  ],
+                ),
+              ),
+              Switch.adaptive(
+                value: _isReminderEnabled,
+                activeThumbColor: Colors.deepOrange,
+                onChanged: (val) {
+                  setState(() {
+                    _isReminderEnabled = val;
+                  });
+                },
+              ),
+            ],
+          ),
+          const Divider(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Khung giờ nhắc nhở', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.access_time, size: 16, color: Colors.deepOrange),
+                onPressed: _selectReminderTime,
+                label: Text(_reminderTime.format(context), style: const TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          const Divider(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Cảnh báo nguy cơ mất chuỗi', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                    SizedBox(height: 2),
+                    Text('Gửi cảnh báo gấp vào 20:00 nếu chưa học', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  ],
+                ),
+              ),
+              Switch.adaptive(
+                value: _isSmartWarningEnabled,
+                activeThumbColor: Colors.deepOrange,
+                onChanged: (val) {
+                  setState(() {
+                    _isSmartWarningEnabled = val;
+                  });
+                },
+              ),
+            ],
+          ),
           const SizedBox(height: 12),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Bật nhắc nhở hàng ngày', style: TextStyle(fontSize: 14)),
-            subtitle: Text('Thông báo lúc ${_reminderTime.format(context)}', style: const TextStyle(fontSize: 12)),
-            value: _isReminderEnabled,
-            activeThumbColor: Colors.deepOrange,
-            onChanged: (val) {
-              setState(() {
-                _isReminderEnabled = val;
-              });
-            },
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Khung giờ nhắc nhở', style: TextStyle(fontSize: 14)),
-            trailing: OutlinedButton(
-              onPressed: _selectReminderTime,
-              child: Text(_reminderTime.format(context)),
-            ),
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text('Cảnh báo nguy cơ mất chuỗi', style: TextStyle(fontSize: 14)),
-            subtitle: const Text('Gửi cảnh báo gấp vào 20:00 nếu chưa học', style: TextStyle(fontSize: 12)),
-            value: _isSmartWarningEnabled,
-            activeThumbColor: Colors.deepOrange,
-            onChanged: (val) {
-              setState(() {
-                _isSmartWarningEnabled = val;
-              });
-            },
-          ),
-          const SizedBox(height: 8),
           Center(
             child: TextButton.icon(
               onPressed: _sendTestNotification,
