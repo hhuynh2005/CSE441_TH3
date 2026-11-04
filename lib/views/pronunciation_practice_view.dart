@@ -608,19 +608,19 @@ class _PronunciationPracticeViewState extends State<PronunciationPracticeView>
       _isProcessingAI = true;
     });
 
-    // Chờ 350ms để Web Speech Recognition hoàn tất xử lý kết quả
-    await Future.delayed(const Duration(milliseconds: 350));
-
     String recognizedText = '';
     double confidence = 0.92;
 
     // Phân loại dữ liệu theo Chế độ thu âm / Kiểm thử được chọn
     if (_inputMode == 'mic') {
-      recognizedText = web_audio.getLastRecognizedText();
-      confidence = web_audio.getLastConfidence();
-      // Nếu thời lượng ghi âm < 1 giây hoặc không có tín hiệu nói
-      if (recognizedText.isEmpty && _recordingSeconds < 1) {
-        recognizedText = '';
+      // Đợi nhận diện Web STT hoàn tất tối đa 1.2s (kiểm tra mỗi 80ms)
+      for (int i = 0; i < 15; i++) {
+        recognizedText = web_audio.getLastRecognizedText();
+        confidence = web_audio.getLastConfidence();
+        if (recognizedText.isNotEmpty) {
+          break; // Đã nhận diện được, tiếp tục ngay lập tức
+        }
+        await Future.delayed(const Duration(milliseconds: 80));
       }
     } else if (_inputMode == 'perfect') {
       recognizedText = _currentWord.word;

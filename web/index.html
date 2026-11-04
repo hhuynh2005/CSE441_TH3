@@ -27,19 +27,68 @@
 
   <script>
     // ==============================================================================
-    // 1. PHÁT ÂM THANH MẪU CHUẨN BẢN XỨ (CDN HUMAN AUDIO & TTS FALLBACK)
+    // 0. BỘ TẠO ÂM THANH HIỆU ỨNG (WEB AUDIO API CHIME GENERATOR)
     // ==============================================================================
+    let globalAudioCtx = null;
+    window.playChime = function(freq, duration) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        if (!globalAudioCtx) {
+          globalAudioCtx = new AudioContext();
+        }
+        if (globalAudioCtx.state === 'suspended') {
+          globalAudioCtx.resume();
+        }
+        const osc = globalAudioCtx.createOscillator();
+        const gain = globalAudioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq || 520, globalAudioCtx.currentTime);
+        const dur = duration || 0.12;
+        gain.gain.setValueAtTime(0.18, globalAudioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, globalAudioCtx.currentTime + dur);
+        osc.connect(gain);
+        gain.connect(globalAudioCtx.destination);
+        osc.start(globalAudioCtx.currentTime);
+        osc.stop(globalAudioCtx.currentTime + dur);
+      } catch(e) {
+        console.warn('playChime warning:', e);
+      }
+    };
+
+    // ==============================================================================
+    // 1. PHÁT ÂM THANH MẪU CHUẨN BẢN XỨ (GOOGLE TTS + YOUDAO CDN + WEB SPEECH API)
+    // ==============================================================================
+    let persistentAudio = null;
+    function getPersistentAudio() {
+      if (!persistentAudio) {
+        persistentAudio = document.getElementById('speakup_dom_audio');
+        if (!persistentAudio) {
+          persistentAudio = document.createElement('audio');
+          persistentAudio.id = 'speakup_dom_audio';
+          persistentAudio.style.display = 'none';
+          document.body.appendChild(persistentAudio);
+        }
+      }
+      return persistentAudio;
+    }
+
     window.speakWord = function(text, lang) {
       if (!text) return;
+      window.playChime(659.25, 0.1);
       try {
         if (window.speechSynthesis) {
           window.speechSynthesis.resume();
         }
 
+        const encoded = encodeURIComponent(text.trim());
         const accentType = (lang === 'UK') ? '1' : '2';
-        const cdnUrl = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(text) + '&type=' + accentType;
-        const audio = new Audio(cdnUrl);
-        
+        const googleUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=' + encoded;
+        const youdaoUrl = 'https://dict.youdao.com/dictvoice?audio=' + encoded + '&type=' + accentType;
+
+        const audio = getPersistentAudio();
+        audio.src = googleUrl;
+
         let played = false;
         const playFallback = function() {
           if (played) return;
@@ -53,7 +102,7 @@
               utterance.rate = 0.85;
               utterance.pitch = 1.0;
               window.speechSynthesis.speak(utterance);
-              console.log('🔊 Fallback Web Speech Synthesis:', text);
+              console.log('🔊 Web Speech Synthesis utterance:', text);
             } catch(e) {
               console.warn('TTS error:', e);
             }
@@ -61,21 +110,26 @@
         };
 
         audio.onended = function() { played = true; };
-        audio.onerror = function(err) {
-          console.warn('CDN audio error, switching to TTS:', err);
-          playFallback();
+        audio.onerror = function() {
+          console.warn('Google TTS error, trying Youdao CDN...');
+          audio.src = youdaoUrl;
+          audio.play().then(function() {
+            played = true;
+          }).catch(function() {
+            playFallback();
+          });
         };
 
         const timer = setTimeout(function() {
           if (!played) playFallback();
-        }, 1500);
+        }, 1200);
 
         const p = audio.play();
         if (p !== undefined) {
           p.then(function() {
             clearTimeout(timer);
             played = true;
-            console.log('✅ CDN Audio phát thành công:', text, 'Acc:', lang);
+            console.log('✅ Âm thanh mẫu đã phát thành công:', text);
           }).catch(function(err) {
             clearTimeout(timer);
             playFallback();
@@ -94,7 +148,6 @@
     let audioChunks = [];
     let audioBlob = null;
     let recordedAudioUrl = null;
-    let currentPlaybackAudio = null;
     let currentMimeType = '';
 
     let recognition = null;
@@ -102,67 +155,97 @@
     window.lastConfidence = 0.0;
     window.isSpeechRecActive = false;
 
-    // Khởi tạo Web Speech Recognition (Google Speech Engine tích hợp sẵn trong Chrome/Edge)
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRec();
-      recognition.continuous = false;
-      recognition.interimResults = true;
-      recognition.maxAlternatives = 3;
+    // Khởi tạo phiên SpeechRecognition mới mỗi lần bấm Micro (Tránh lỗi InvalidStateError)
+    function createFreshRecognition(lang) {
+      if (recognition) {
+        try {
+          recognition.abort();
+        } catch(e) {}
+        recognition = null;
+      }
 
-      recognition.onresult = function(event) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRec) {
+        console.warn('Trình duyệt không hỗ trợ Web Speech Recognition');
+        return null;
+      }
+
+      const rec = new SpeechRec();
+      rec.continuous = true; // Giữ Micro mở liên tục kể cả khi người dùng tạm ngừng hơi
+      rec.interimResults = true; // Bắt tức thời âm thanh theo thời gian thực
+      rec.maxAlternatives = 3;
+      rec.lang = (lang === 'UK') ? 'en-GB' : 'en-US';
+
+      rec.onresult = function(event) {
         for (let i = event.resultIndex; i < event.results.length; ++i) {
           const res = event.results[i];
-          if (res.isFinal || res[0].confidence > 0.3) {
-            window.lastRecognizedText = res[0].transcript.trim().toLowerCase();
-            window.lastConfidence = res[0].confidence || 0.92;
-            console.log('🎤 Web STT Recognized:', window.lastRecognizedText, 'Conf:', window.lastConfidence);
+          if (res && res[0] && res[0].transcript) {
+            const rawText = res[0].transcript.trim().toLowerCase();
+            if (rawText.length > 0) {
+              window.lastRecognizedText = rawText;
+              window.lastConfidence = (res[0].confidence && res[0].confidence > 0) ? res[0].confidence : 0.92;
+              console.log('🎤 Web STT Realtime:', window.lastRecognizedText, 'Conf:', window.lastConfidence, 'isFinal:', res.isFinal);
+            }
           }
         }
       };
 
-      recognition.onerror = function(event) {
+      rec.onerror = function(event) {
         console.warn('Speech recognition warning/error:', event.error);
+        if (event.error === 'not-allowed') {
+          console.error('Quyền truy cập Microphone bị từ chối.');
+        }
+      };
+
+      rec.onend = function() {
         window.isSpeechRecActive = false;
       };
 
-      recognition.onend = function() {
-        window.isSpeechRecActive = false;
-      };
+      return rec;
     }
 
     window.startWebRecording = async function(lang) {
       window.lastRecognizedText = '';
       window.lastConfidence = 0.0;
       audioChunks = [];
-      if (currentPlaybackAudio) {
-        currentPlaybackAudio.pause();
-        currentPlaybackAudio = null;
-      }
       if (recordedAudioUrl) {
         URL.revokeObjectURL(recordedAudioUrl);
         recordedAudioUrl = null;
       }
 
-      // Khởi động nhận diện giọng nói STT
-      if (recognition) {
-        try {
-          recognition.lang = (lang === 'UK') ? 'en-GB' : 'en-US';
+      // 1. Khởi động nhận diện giọng nói STT
+      try {
+        recognition = createFreshRecognition(lang);
+        if (recognition) {
           recognition.start();
           window.isSpeechRecActive = true;
           console.log('🎤 STT engine started in:', recognition.lang);
-        } catch (e) {
-          console.warn('Recognition start skipped (already running):', e);
         }
+      } catch (e) {
+        console.warn('Lỗi start recognition:', e);
       }
 
-      // Khởi động thu âm tệp âm thanh thực tế từ Micro
+      // 2. Khởi động thu âm tệp âm thanh thực tế từ Micro
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
           console.warn('Trình duyệt không hỗ trợ getUserMedia');
           return;
         }
-        mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(function(track) {
+            track.stop();
+          });
+          mediaStream = null;
+        }
+
+        mediaStream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
         
         currentMimeType = '';
         if (typeof MediaRecorder.isTypeSupported === 'function') {
@@ -195,12 +278,6 @@
           } catch(e) {
             console.error('Lỗi tạo audio blob:', e);
           }
-          if (mediaStream) {
-            mediaStream.getTracks().forEach(function(track) {
-              track.stop();
-            });
-            mediaStream = null;
-          }
         };
 
         // Ghi nhận khối dữ liệu mỗi 100ms
@@ -212,16 +289,13 @@
     };
 
     window.stopWebRecording = function() {
-      if (recognition && window.isSpeechRecActive) {
+      if (recognition) {
         try {
           recognition.stop();
         } catch (e) {}
       }
-      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
         try {
-          if (typeof mediaRecorder.requestData === 'function') {
-            mediaRecorder.requestData();
-          }
           mediaRecorder.stop();
           console.log('🛑 Đã dừng thu âm');
         } catch (e) {
@@ -231,31 +305,49 @@
     };
 
     window.playRecordedAudio = function() {
+      window.playChime(523.25, 0.12);
       try {
-        if (currentPlaybackAudio) {
-          currentPlaybackAudio.pause();
-          currentPlaybackAudio = null;
-        }
         if (recordedAudioUrl) {
-          currentPlaybackAudio = new Audio(recordedAudioUrl);
-          currentPlaybackAudio.play().then(function() {
+          const audio = getPersistentAudio();
+          audio.src = recordedAudioUrl;
+          audio.play().then(function() {
             console.log('▶️ Đang phát lại giọng nói của bạn qua loa');
           }).catch(function(err) {
             console.error('Lỗi khi phát lại giọng:', err);
+            speakLearnerFallback();
           });
         } else {
-          console.warn('Chưa có tệp thu âm hợp lệ.');
+          speakLearnerFallback();
         }
       } catch (e) {
         console.error('Lỗi phát âm thanh:', e);
+        speakLearnerFallback();
       }
     };
 
-    window.stopRecordedAudio = function() {
-      if (currentPlaybackAudio) {
-        currentPlaybackAudio.pause();
-        currentPlaybackAudio = null;
+    function speakLearnerFallback() {
+      if (window.lastRecognizedText && 'speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+          const utterance = new SpeechSynthesisUtterance(window.lastRecognizedText);
+          utterance.lang = 'en-US';
+          utterance.rate = 0.90;
+          utterance.pitch = 0.85;
+          window.speechSynthesis.speak(utterance);
+          console.log('🔊 Phát lại từ nhận dạng bằng giọng học viên:', window.lastRecognizedText);
+        } catch(e) {}
       }
+    }
+
+    window.stopRecordedAudio = function() {
+      try {
+        const audio = getPersistentAudio();
+        audio.pause();
+        if (window.speechSynthesis) {
+          window.speechSynthesis.cancel();
+        }
+      } catch(e) {}
     };
 
     window.hasRecordedAudio = function() {

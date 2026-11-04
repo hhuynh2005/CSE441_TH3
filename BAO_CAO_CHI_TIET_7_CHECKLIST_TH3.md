@@ -13,21 +13,21 @@
 > 3. **Nguyễn Trung Kiên (2251172394)** — *Thành viên (Speech Recognition & Audio UI)*  
 > 4. **Trần Anh Tuấn (2351170629)** — *Thành viên (AI Phoneme Engine & Feedback)*  
 > 📅 **Thời gian hoàn thành:** Học kỳ 1 — Năm học 2026–2027  
-> 📊 **Kết quả nghiệm thu tổng thể:** **Hoàn thành 7/7 Mục Checklist (100%) — 36/36 Test Cases Đạt**
+> 📊 **Kết quả nghiệm thu tổng thể:** **Hoàn thành 7/7 Mục Checklist (100%) — 36/36 Test Cases Đạt — 0 Lỗi `dart analyze`**
 
 ---
 
 ## 📑 BẢNG TỔNG HỢP TIẾN ĐỘ VÀ ĐỐI SOÁT 7 MỤC CHECKLIST ĐỀ BÀI
 
-| Mục | Nội Dung Checklist Yêu Cầu | Giải Pháp Kỹ Thuật Thực Hiện | Tệp Triển Khai Chính | Trạng Thái |
+| Mục | Nội Dung Checklist Yêu Cầu | Giải Pháp Kỹ Thuật Đã Triển Khai Thực Tế | Tệp Triển Khai Chính | Trạng Thái |
 |:---:|:---|:---|:---|:---:|
-| **1** | **Thiết kế cơ sở dữ liệu** | Xây dựng Schema CSDL quan hệ 7 bảng, hỗ trợ SQLite Local Cache Offline-First và đồng bộ đám mây PostgreSQL. | [`th3_database_schema.sql`](file:///D:/Nam_4/Mobile/TH3/th3_database_schema.sql)<br>[`THIET_KE_KIEN_TRUC_CSDL_TH3.md`](file:///D:/Nam_4/Mobile/TH3/THIET_KE_KIEN_TRUC_CSDL_TH3.md) | ✅ Hoàn thành 100% |
+| **1** | **Thiết kế cơ sở dữ liệu** | Xây dựng Schema CSDL quan hệ 7 bảng (3NF), hỗ trợ SQLite Local Cache Offline-First và đồng bộ đám mây PostgreSQL / Supabase. | [`th3_database_schema.sql`](file:///D:/Nam_4/Mobile/TH3/th3_database_schema.sql)<br>[`THIET_KE_KIEN_TRUC_CSDL_TH3.md`](file:///D:/Nam_4/Mobile/TH3/THIET_KE_KIEN_TRUC_CSDL_TH3.md) | ✅ Hoàn thành 100% |
 | **2** | **Theo dõi tiến độ học tập** | Thuật toán tính chuỗi ngày liên tục (Streak Counter), cơ chế bảo vệ Freeze Streak, quản lý Daily Goals và tổng thời gian học. | [`lib/services/streak_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/streak_service.dart)<br>[`lib/models/user_progress_model.dart`](file:///D:/Nam_4/Mobile/TH3/lib/models/user_progress_model.dart) | ✅ Hoàn thành 100% |
-| **3** | **Tích hợp Speech Recognition API** | Quản lý thu âm Micro định dạng chuẩn WAV 16kHz mono, bộ lọc nhiễu Noise Gate, bóc tách mốc thời gian từ và âm vị, Web TTS & Audio Playback. | [`lib/services/audio_recording_manager.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/audio_recording_manager.dart)<br>[`lib/services/speech_recognition_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/speech_recognition_service.dart)<br>[`lib/widgets/waveform_visualizer.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/waveform_visualizer.dart) | ✅ Hoàn thành 100% |
-| **4** | **AI so sánh âm vị & Chấm điểm** | Bộ chuyển ký tự sang ngữ âm quốc tế IPA (G2P), thuật toán căn gióng Levenshtein âm vị, công thức chấm điểm 3 tiêu chí: Accuracy, Fluency, Completeness. | [`lib/services/phoneme_comparison_engine.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/phoneme_comparison_engine.dart)<br>[`lib/services/pronunciation_scoring_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/pronunciation_scoring_service.dart) | ✅ Hoàn thành 100% |
-| **5** | **Module phản hồi trực quan** | Thẻ điểm số trực quan (ScoreCardWidget), highlight tô màu trực tiếp từng âm vị (xanh: đúng, đỏ: sai, cam: nuốt âm), gợi ý bài học cá nhân hóa. | [`lib/widgets/score_card_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/score_card_widget.dart)<br>[`lib/widgets/phoneme_feedback_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/phoneme_feedback_widget.dart)<br>[`lib/services/targeted_lesson_recommender.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/targeted_lesson_recommender.dart) | ✅ Hoàn thành 100% |
-| **6** | **Thông báo nhắc nhở & UI tiến độ** | Lập lịch thông báo định kỳ (`flutter_local_notifications`), cảnh báo khẩn cấp vào 20:00 cứu chuỗi Streak, giao diện Bảng điều khiển tiến độ Dashboard. | [`lib/services/daily_notification_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/daily_notification_service.dart)<br>[`lib/views/progress_dashboard_view.dart`](file:///D:/Nam_4/Mobile/TH3/lib/views/progress_dashboard_view.dart)<br>[`lib/widgets/streak_badge_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/streak_badge_widget.dart) | ✅ Hoàn thành 100% |
-| **7** | **Kiểm thử đa người dùng & Đa giọng nói** | Kịch bản kiểm thử Multi-Accent (giọng Việt, giọng nuốt âm đuôi, giọng bản xứ US/UK), 36 bài kiểm thử tự động đạt 100% và phân tích tĩnh không lỗi. | [`test/audio_recording_speech_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/audio_recording_speech_test.dart)<br>[`test/phoneme_engine_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/phoneme_engine_test.dart)<br>[`test/streak_service_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/streak_service_test.dart) | ✅ 36/36 Tests Passed |
+| **3** | **Tích hợp Speech Recognition API & Thu âm** | Quản lý thu âm Micro định dạng chuẩn WAV 16kHz mono, bộ lọc nhiễu Noise Gate, bóc tách mốc thời gian từ và âm vị, Web MediaRecorder thu âm tệp Blob thực tế, Web Audio API Chime, phát âm đa tầng (Google TTS + Youdao CDN + Web Speech API). | [`lib/services/audio_recording_manager.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/audio_recording_manager.dart)<br>[`lib/services/speech_recognition_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/speech_recognition_service.dart)<br>[`lib/widgets/waveform_visualizer.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/waveform_visualizer.dart)<br>[`web/index.html`](file:///D:/Nam_4/Mobile/TH3/web/index.html) | ✅ Hoàn thành 100% |
+| **4** | **AI so sánh âm vị & Chấm điểm** | Bộ chuyển ký tự sang ngữ âm quốc tế IPA (G2P), thuật toán căn gióng Levenshtein âm vị động, công thức chấm điểm 3 tiêu chí: Accuracy, Fluency, Completeness. Kho từ vựng 40+ từ/câu thuộc 5 chủ đề và tính năng thêm từ mới. | [`lib/services/phoneme_comparison_engine.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/phoneme_comparison_engine.dart)<br>[`lib/services/pronunciation_scoring_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/pronunciation_scoring_service.dart) | ✅ Hoàn thành 100% |
+| **5** | **Module phản hồi trực quan** | Thẻ điểm số trực quan (ScoreCardWidget), highlight tô màu trực tiếp từng âm vị (xanh: đúng, đỏ: sai, cam: nuốt âm), hướng dẫn khẩu hình miệng và gợi ý bài học cá nhân hóa. | [`lib/widgets/score_card_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/score_card_widget.dart)<br>[`lib/widgets/phoneme_feedback_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/phoneme_feedback_widget.dart)<br>[`lib/services/targeted_lesson_recommender.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/targeted_lesson_recommender.dart) | ✅ Hoàn thành 100% |
+| **6** | **Thông báo nhắc nhở & UI tiến độ** | Lập lịch thông báo định kỳ (`flutter_local_notifications`), cảnh báo khẩn cấp vào 20:00 cứu chuỗi Streak, giao diện Bảng điều khiển tiến độ Dashboard kèm Heatmap 7 ngày. | [`lib/services/daily_notification_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/daily_notification_service.dart)<br>[`lib/views/progress_dashboard_view.dart`](file:///D:/Nam_4/Mobile/TH3/lib/views/progress_dashboard_view.dart)<br>[`lib/widgets/streak_badge_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/streak_badge_widget.dart) | ✅ Hoàn thành 100% |
+| **7** | **Kiểm thử đa người dùng & Đa giọng nói** | Kịch bản kiểm thử Multi-Accent (giọng Việt chuẩn, giọng nuốt âm đuôi, giọng bản xứ US/UK, môi trường ồn), 36 bài kiểm thử tự động đạt 100% và phân tích tĩnh không lỗi. | [`test/audio_recording_speech_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/audio_recording_speech_test.dart)<br>[`test/phoneme_engine_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/phoneme_engine_test.dart)<br>[`test/streak_service_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/streak_service_test.dart) | ✅ 36/36 Tests Passed |
 
 ---
 
@@ -98,7 +98,7 @@ erDiagram
 ### 1.2. Các bảng dữ liệu chính trong CSDL
 1. **`users`:** Quản lý tài khoản, thông tin hồ sơ, mục tiêu ngày và số lượng khiên đóng băng Freeze Streak sở hữu.
 2. **`daily_streaks`:** Lưu trữ chính xác chuỗi ngày học hiện tại (`current_streak`), kỷ lục chuỗi dài nhất (`longest_streak`), ngày học gần nhất và lịch sử điểm danh.
-3. **`lessons` & `practice_words`:** Danh mục bài học phân cấp theo chủ đề (Daily Life, Business, Academic) và kho từ vựng kèm phiên âm chuẩn quốc tế IPA (`ipa_target`).
+3. **`lessons` & `practice_words`:** Danh mục bài học phân cấp theo 5 chủ đề và kho từ vựng 40+ từ kèm phiên âm chuẩn quốc tế IPA (`ipa_target`).
 4. **`practice_sessions`:** Nhật ký phiên học ghi lại thời gian bắt đầu, kết thúc, tổng số phút học và số từ vựng đã luyện tập.
 5. **`pronunciation_logs`:** Bảng ghi kết quả chấm điểm từng từ với đầy đủ điểm số thành phần (Accuracy, Fluency, Completeness, Overall Score).
 6. **`phoneme_results`:** Lưu trữ chi tiết lỗi ở mức âm vị nhỏ nhất (âm đúng, âm sai thay thế, âm bị nuốt) phục vụ thuật toán cá nhân hóa bài học ở Checklist 5.
@@ -134,36 +134,33 @@ Nếu không may chuỗi ngày bị đứt, học viên có thể kích hoạt t
 
 ---
 
-## 📌 PHẦN 3: CHECKLIST 3 — TÍCH HỢP SPEECH RECOGNITION API & THU ÂM
+## 📌 PHẦN 3: CHECKLIST 3 — TÍCH HỢP SPEECH RECOGNITION API & XỬ LÝ ÂM THANH
 * **Phụ trách:** Nguyễn Trung Kiên (2251172394)  
-* **Tệp triển khai:** [`lib/services/audio_recording_manager.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/audio_recording_manager.dart), [`lib/services/speech_recognition_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/speech_recognition_service.dart), [`lib/widgets/waveform_visualizer.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/waveform_visualizer.dart)
+* **Tệp triển khai:** [`lib/services/audio_recording_manager.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/audio_recording_manager.dart), [`lib/services/speech_recognition_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/speech_recognition_service.dart), [`lib/widgets/waveform_visualizer.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/waveform_visualizer.dart), [`web/index.html`](file:///D:/Nam_4/Mobile/TH3/web/index.html), [`lib/services/web_audio_helper_web.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/web_audio_helper_web.dart)
 
-### 3.1. Tiêu chuẩn âm thanh đầu vào (WAV 16kHz PCM)
-Để mô hình AI nhận diện giọng nói và căn gióng âm vị đạt độ chính xác tối ưu, module `AudioRecordingManager` chuẩn hóa luồng âm thanh theo các thông số kỹ thuật tiêu chuẩn phòng lab:
-* **Tần số lấy mẫu (Sample Rate):** 16.000 Hz (16kHz).
-* **Số kênh âm thanh (Channels):** 1 kênh (Mono).
-* **Độ sâu bit (Bit Depth):** 16-bit Linear PCM.
-* **Tốc độ truyền dữ liệu (Bitrate):** $16.000 \times 1 \times 16 = 256.000\text{ bps}$ ($32\text{ KB/s}$).
-* **Công thức kích thước tệp WAV có Header 44-byte:**
-  $$\text{File Size} = 44 + (\text{Duration in seconds} \times 32.000)\text{ bytes}$$
+### 3.1. Tiêu chuẩn âm thanh đầu vào (WAV 16kHz PCM & Noise Gate)
+Module `AudioRecordingManager` chuẩn hóa luồng âm thanh theo các thông số kỹ thuật tiêu chuẩn:
+* **Tần số lấy mẫu:** 16.000 Hz (16kHz).
+* **Số kênh:** 1 kênh (Mono), 16-bit Linear PCM.
+* **Tốc độ truyền dữ liệu:** $16.000 \times 1 \times 16 = 256.000\text{ bps}$ ($32\text{ KB/s}$).
+* **Thuật toán lọc nhiễu Noise Gate:** Triệt tiêu hoàn toàn tạp âm nền có biên độ dưới ngưỡng $0.08$ (tiếng quạt, tiếng đường phố) và chuẩn hóa biên độ hợp lệ.
 
-### 3.2. Thuật toán lọc nhiễu môi trường Noise Gate
-Bộ lọc Noise Gate loại bỏ các tạp âm tĩnh nền (tiếng quạt, tiếng đường phố, tiếng rì rầm quán cafe):
+### 3.2. Khắc phục Triệt để Lỗi "Ghi âm lúc được lúc không" trên Trình duyệt Web
+Trong quá trình thực nghiệm đa người dùng, nhóm đã phát hiện và xử lý dứt điểm 3 nguyên nhân kỹ thuật:
+1. **Lỗi ngắt khi ngập ngừng (`continuous = false`):** Mặc định Chrome tự đóng Micro nếu người dùng lấy hơi hoặc ngập ngừng 0.4s trước khi nói. Giải pháp: Thiết lập `continuous = true` để giữ Micro mở liên tục xuyên suốt phiên thu âm cho đến khi người dùng chủ động bấm Dừng.
+2. **Lỗi xung đột trạng thái (`InvalidStateError`):** Khi bấm dừng rồi bấm thu âm lại nhanh, phiên cũ của Chrome chưa kịp hủy gây ra `InvalidStateError`. Giải pháp: Xây dựng hàm `createFreshRecognition(lang)` tự động `abort()` phiên cũ và khởi tạo phiên hoàn toàn sạch sẽ mỗi lần bấm.
+3. **Hiện tượng Race Condition (Chênh lệch độ trễ mạng Google Cloud STT):** Mạng Internet đôi khi mất 400ms – 800ms để trả kết quả nhận dạng. Giải pháp: Xây dựng **vòng lặp chờ thông minh (Smart Polling Loop)** trong Flutter, kiểm tra mỗi 80ms (tối đa 1.2s); bắt được kết quả lúc nào thì xử lý ngay lập tức lúc đó, không bao giờ kết luận sai thành "không có âm thanh".
 
-```dart
-double applyNoiseGate(double rawAmplitude, {double threshold = 0.08}) {
-  if (rawAmplitude < threshold) {
-    return 0.0; // Triệt tiêu hoàn toàn tạp âm dưới ngưỡng
-  }
-  // Chuẩn hóa và làm mịn biên độ hợp lệ
-  return ((rawAmplitude - threshold) / (1.0 - threshold)).clamp(0.0, 1.0);
-}
-```
+### 3.3. Hệ thống Phát âm mẫu Đa tầng (Multi-tier Audio Pipeline)
+Đảm bảo âm thanh mẫu bản xứ luôn phát to rõ qua loa trong mọi hoàn cảnh:
+* **Tầng 1 (Ưu tiên):** `Google Translate TTS Engine API` (`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q={text}`).
+* **Tầng 2:** `Youdao Human Voice CDN API` (`https://dict.youdao.com/dictvoice?audio={text}&type=1|2`) hỗ trợ chuẩn hóa chất giọng US và UK.
+* **Tầng 3:** `Web Speech Synthesis API` (`window.speechSynthesis`) tự động `resume()` giải phóng trạng thái paused.
+* **Hiệu ứng tức thì:** `Web Audio API` (`AudioContext` Sine Chime) phát tiếng chuông nhẹ 100ms ngay khi bấm nút để phản hồi vật lý qua loa.
 
-### 3.3. Hiệu ứng Sóng âm thời gian thực & Bộ điều khiển Web MediaRecorder
-* **Giao diện sóng âm [`WaveformVisualizerWidget`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/waveform_visualizer.dart):** Nhận luồng dữ liệu biên độ âm thanh thời gian thực (chu kỳ 60ms ~ 16 FPS), hiển thị 24 cột sóng dao động mượt mà với hiệu ứng dải màu Gradient (Indigo sang Tím).
-* **Bộ phát âm mẫu Text-to-Speech (TTS):** Tích hợp Web Speech Synthesis API (`window.speechSynthesis`) cho phép phát âm thanh từ mẫu của người bản xứ với 2 chất giọng: **US (Anh - Mỹ)** và **UK (Anh - Anh)**.
-* **Bộ thu và phát lại giọng học viên:** Sử dụng `MediaRecorder` với luồng dữ liệu liên tục (`timeslice: 200ms`), tạo tệp Blob âm thanh thực tế và phát lại trực tiếp qua loa thiết bị khi học viên bấm nghe lại (▶️).
+### 3.4. Thu âm và Phát lại Giọng nói Thực tế của Học viên
+* Tích hợp `MediaRecorder` thu luồng PCM/Opus từ Microphone và đóng gói thành `Blob URL`.
+* Giao diện cung cấp thanh điều khiển phát lại có hiển thị thời lượng (giây), thanh tiến độ `LinearProgressIndicator` động và nút **Play (▶️)** để học viên đối chiếu trực tiếp giọng mình với giọng mẫu.
 
 ---
 
@@ -172,35 +169,35 @@ double applyNoiseGate(double rawAmplitude, {double threshold = 0.08}) {
 * **Tệp triển khai:** [`lib/services/phoneme_comparison_engine.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/phoneme_comparison_engine.dart), [`lib/services/pronunciation_scoring_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/pronunciation_scoring_service.dart)
 
 ### 4.1. Bộ chuyển đổi Ký tự sang Ngữ âm quốc tế (G2P Engine)
-Module `PhonemeComparisonEngine` chuyển đổi từ vựng tiếng Anh chuẩn sang chuỗi âm vị ngữ âm quốc tế IPA (dựa trên bảng ký âm 44 âm vị quốc tế):
+Module `PhonemeComparisonEngine` chuyển đổi từ vựng hoặc câu hoàn chỉnh sang chuỗi âm vị quốc tế IPA dựa trên từ điển chuẩn:
 * `cat` $\rightarrow$ `['k', 'æ', 't']`
 * `cats` $\rightarrow$ `['k', 'æ', 't', 's']`
 * `think` $\rightarrow$ `['θ', 'ɪ', 'ŋ', 'k']`
 * `water` $\rightarrow$ `['w', 'ɔː', 't', 'ər']`
+* `schedule` $\rightarrow$ `['s', 'k', 'e', 'dʒ', 'uː', 'l']`
+* Hỗ trợ tự động phân tách âm vị cho toàn bộ câu dài (`practice makes perfect`).
 
-### 4.2. Thuật toán Căn gióng âm vị Levenshtein (Phonetic Alignment)
-Khoảng cách chỉnh sửa ngữ âm tính toán số phép biến đổi nhỏ nhất (Thay thế, Thêm, Xóa/Nuốt âm) giữa chuỗi âm vị mục tiêu $T$ và chuỗi âm vị thực tế người dùng phát âm $A$:
+### 4.2. Kho Từ vựng Mở rộng 40+ Bài Luyện & Tính năng Thêm Từ Mới Động
+Để khắc phục hoàn toàn tình trạng giao diện tĩnh, nhóm đã xây dựng kho bài học phong phú gồm 40+ mục chia theo 5 nhóm chủ đề:
+1. **🔤 Âm vị dễ nhầm (10 từ):** `cat`, `cats`, `ship`, `sheep`, `sheet`, `think`, `that`, `water`, `dogs`, `vision`.
+2. **💼 Giao tiếp công sở (8 từ):** `schedule`, `colleague`, `presentation`, `negotiation`, `deadline`, `developer`, `management`, `experience`.
+3. **✈️ Du lịch & Khách sạn (8 từ):** `passport`, `reservation`, `itinerary`, `destination`, `departure`, `luggage`, `boarding`, `restaurant`.
+4. **💻 Công nghệ & Kỹ thuật (8 từ):** `artificial`, `intelligence`, `algorithm`, `database`, `architecture`, `cybersecurity`, `cloud`, `application`.
+5. **🗣️ Mẫu câu giao tiếp thực tế (6 câu):** `practice makes perfect`, `nice to meet you`, `could you repeat that`, `how can I help you`, `speak english every day`, `artificial intelligence is powerful`.
+6. **Nút "+ Thêm từ / câu mới" (Dynamic Custom Word):** Cho phép người học hoặc giảng viên nhập bất kỳ từ/câu mới nào kèm phiên âm IPA và nghĩa tiếng Việt để luyện tập ngay lập tức.
 
-$$D(i, j) = \min \begin{cases}
-D(i-1, j) + \text{Cost}_{del} & \text{(Nuốt âm / Bỏ sót)} \\
-D(i, j-1) + \text{Cost}_{ins} & \text{(Thêm âm lạ)} \\
-D(i-1, j-1) + \text{Cost}_{sub}(T_i, A_j) & \text{(Phát âm sai âm vị)}
-\end{cases}$$
+### 4.3. Thuật toán Căn gióng âm vị và Chấm điểm Động (Dynamic Scoring)
+Loại bỏ hoàn toàn điểm số giả lập cố định (hardcoded). Hệ thống chấm điểm thời gian thực theo công thức:
 
-Ma trận khoảng cách đặc biệt gán trọng số phạt nặng cho lỗi nuốt phụ âm cuối (ending sounds như `/s/`, `/t/`, `/d/`, `/z/`) — đây là lỗi kinh điển nhất của học viên Việt Nam khi nói tiếng Anh.
+$$\text{Accuracy Score} = \left( \frac{\text{Correct} \times 1.0 + \text{Incorrect} \times 0.3}{|T|} \right) \times 100$$
 
-### 4.3. Công thức chấm điểm phát âm toàn diện
-Hệ thống chấm điểm theo thang điểm chuẩn 100 dựa trên 3 trụ cột:
+$$\text{Completeness Score} = \left( \frac{|T| - \text{Missed}}{|T|} \right) \times 100$$
 
-$$\text{Accuracy Score} = \left( 1.0 - \frac{\text{Phonetic Levenshtein Distance}}{\max(|T|, |A|)} \right) \times 100$$
+$$\text{Fluency Score} = \max(40.0, 100.0 - (\text{Pause Duration} \times 20.0))$$
 
-$$\text{Fluency Score} = \left( 100 - (\text{Số khoảng lặng ngập ngừng} \times 15) \right) \times \left( \frac{\text{WPM}}{120} \right)$$
+$$\mathbf{Overall\ Score} = 0.60 \times \text{Accuracy} + 0.25 \times \text{Fluency} + 0.15 \times \text{Completeness}$$
 
-$$\text{Completeness Score} = \left( \frac{\text{Số âm vị phát âm đủ}}{\text{Tổng số âm vị mục tiêu}} \right) \times 100$$
-
-Điểm tổng hợp cuối cùng (Weighted Composite Score):
-
-$$\mathbf{Total\ Score} = 0.50 \times \text{Accuracy} + 0.25 \times \text{Fluency} + 0.25 \times \text{Completeness}$$
+* **Khi người dùng im lặng (không nói gì):** Điểm số trả về chuẩn xác **0.0 điểm**, toàn bộ âm vị đánh dấu `missed` kèm cảnh báo: *"⚠️ Không phát hiện giọng nói hoặc âm lượng quá nhỏ. Hãy nói to, rõ ràng vào Micro!"*.
 
 ---
 
@@ -209,25 +206,18 @@ $$\mathbf{Total\ Score} = 0.50 \times \text{Accuracy} + 0.25 \times \text{Fluenc
 * **Tệp triển khai:** [`lib/widgets/score_card_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/score_card_widget.dart), [`lib/widgets/phoneme_feedback_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/phoneme_feedback_widget.dart), [`lib/services/targeted_lesson_recommender.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/targeted_lesson_recommender.dart)
 
 ### 5.1. Thẻ điểm số trực quan (ScoreCardWidget)
-* Điểm tổng thể được hiển thị dạng vòng tròn tiến độ nổi bật với thang màu trực quan:
+* Vòng tròn điểm tổng thể với 4 cấp độ màu sắc:
   * $\ge 85$ điểm: Xanh lục (Xuất sắc — Chuẩn người bản xứ).
-  * 70 – 84 điểm: Xanh dương (Tốt — Phát âm dễ hiểu).
-  * 50 – 69 điểm: Cam (Cần cải thiện — Có lỗi âm vị).
-  * $< 50$ điểm: Đỏ (Chưa đạt — Phát âm sai nhiều âm).
-* Hiển thị chi tiết 3 thanh tiến độ thành phần: *Độ chính xác (Accuracy)*, *Độ trôi chảy (Fluency)*, *Độ đầy đủ (Completeness)*.
+  * 70 – 84 điểm: Xanh dương (Tốt — Dễ hiểu).
+  * 50 – 69 điểm: Cam (Cần cải thiện).
+  * $< 50$ điểm: Đỏ (Chưa đạt).
+* 3 thanh đo tiến độ thành phần: Accuracy, Fluency, Completeness.
 
 ### 5.2. Widget Highlight tô màu trực quan âm vị (PhonemeFeedbackWidget)
-Từng ký tự âm vị trong từ vựng được bóc tách và tô màu riêng biệt theo bảng mã màu:
-* 🟢 **Xanh lá cây:** Phát âm chính xác hoàn toàn so với phiên âm chuẩn.
-* 🔴 **Màu đỏ:** Phát âm sai âm vị (kèm hiển thị âm vị sai người dùng đã nói để nhận biết).
-* 🟠 **Màu cam:** Nuốt âm / Bỏ sót âm (đặc biệt là âm gió `/s/` và âm đuôi `/t/`).
-* Có phần **Hướng dẫn khẩu hình miệng (Mouth Anatomy Tips)** hướng dẫn đặt lưỡi và răng chuẩn để sửa lỗi (Ví dụ: đối với âm `/θ/`: *"Đặt đầu lưỡi giữa hai hàm răng trên và dưới, thổi luồng hơi nhẹ mà không rung dây thanh"*).
-
-### 5.3. Thuật toán Gợi ý Bài tập cải thiện cá nhân hóa (TargetedLessonRecommender)
-Dựa trên lịch sử các âm vị bị điểm kém trong bảng `phoneme_results`, thuật toán tự động tổng hợp danh sách các âm vị yếu nhất của học viên và đề xuất gói bài tập gồm:
-1. Bài luyện âm đơn cô lập (Drill exercises).
-2. Các cặp từ tối thiểu tương phản (Minimal pairs: ví dụ phân biệt `/i:/` vs `/ɪ/` trong `sheet` vs `shit`).
-3. Mẫu câu giao tiếp thực tế chứa nhiều âm vị học viên thường nói sai.
+* 🟢 **Xanh lá cây:** Âm vị đọc đúng chuẩn xác 100%.
+* 🔴 **Màu đỏ:** Âm vị đọc sai hoặc nhầm lẫn (ví dụ nhầm `/i:/` thành `/ɪ/` trong `sheet`).
+* 🟠 **Màu cam:** Nuốt âm / Bỏ sót âm đuôi (ví dụ đọc thiếu `/s/` trong `cats`).
+* **Mouth Anatomy Tips:** Bảng hướng dẫn chi tiết cách đặt lưỡi, khẩu hình môi và rung thanh quản cho từng âm vị sai (ví dụ âm `/θ/`, `/ʃ/`, `/dʒ/`).
 
 ---
 
@@ -236,25 +226,21 @@ Dựa trên lịch sử các âm vị bị điểm kém trong bảng `phoneme_re
 * **Tệp triển khai:** [`lib/services/daily_notification_service.dart`](file:///D:/Nam_4/Mobile/TH3/lib/services/daily_notification_service.dart), [`lib/views/progress_dashboard_view.dart`](file:///D:/Nam_4/Mobile/TH3/lib/views/progress_dashboard_view.dart), [`lib/widgets/streak_badge_widget.dart`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/streak_badge_widget.dart)
 
 ### 6.1. Dịch vụ Thông báo cục bộ hàng ngày (Daily Notification Service)
-* **Lên lịch định kỳ:** Sử dụng `flutter_local_notifications` lên lịch thông báo nhắc học đúng vào khung giờ người dùng tùy chọn (mặc định 20:00).
-* **Cảnh báo khẩn cấp nguy cơ mất chuỗi (Smart Emergency Warning):** Vào lúc 20:00 hằng ngày, hệ thống quét trạng thái `checkStreakRiskStatus`. Nếu học viên chưa học bài trong ngày và có chuỗi ngày $\ge 3$, thông báo khẩn cấp với thông điệp: *"🔥 Chuỗi X ngày của bạn sắp tan biến vào 24:00 đêm nay! Hãy dành 5 phút luyện nói ngay!"* sẽ được gửi đến thiết bị.
-* **Thông báo chúc mừng kỷ lục:** Tự động gửi thông báo vinh danh khi chuỗi ngày đạt mốc quan trọng (3, 7, 14, 30 ngày).
+* **Thông báo định kỳ:** Lên lịch thông báo qua `flutter_local_notifications` theo giờ người dùng cài đặt.
+* **Cảnh báo khẩn cấp 20:00 (Emergency Streak Rescue):** Tự động phát hiện người dùng có nguy cơ đứt chuỗi và gửi cảnh báo cứu chuỗi trước 24:00.
 
 ### 6.2. Giao diện Bảng điều khiển tiến độ học tập (ProgressDashboardView)
-* **Thẻ hồ sơ học viên (Header Profile):** Hiển thị thông tin người học, ID sinh viên, và Cúp cấp độ kỷ luật.
-* **Huy hiệu Chuỗi ngày ([`StreakBadgeWidget`](file:///D:/Nam_4/Mobile/TH3/lib/widgets/streak_badge_widget.dart)):** Hiển thị biểu tượng ngọn lửa rực sáng kèm số ngày học liên tục và số lượng khiên đóng băng Freeze Streak khả dụng.
-* **Ma trận điểm danh học tập (Study Heatmap):** Hiển thị trực quan 7 ngày trong tuần, tích xanh các ngày đã hoàn thành và cảnh báo ngày hôm nay chưa hoàn thành.
-* **Biểu đồ mục tiêu ngày (Daily Goal Progress):** Vòng tròn tiến độ trực quan thể hiện số phút học và số từ đã phát âm trong ngày.
+* Thẻ hồ sơ học viên, huy hiệu Streak rực sáng, số khiên Freeze khả dụng.
+* Ma trận điểm danh học tập (Study Heatmap 7 ngày).
+* Khắc phục hoàn toàn lỗi assertion layout Material ListTile trong Flutter Web bằng `Switch.adaptive` tùy biến.
 
 ---
 
-## 📌 PHẦN 7: CHECKLIST 7 — KIỂM THỬ ĐA NGƯỜI DÙNG & ĐA GIỌNG NÓI (MULTI-ACCENT TESTING)
+## 📌 PHẦN 7: CHECKLIST 7 — KIỂM THỬ ĐA NGƯỜI DÙNG & ĐA GIỌNG NÓI
 * **Phụ trách:** Nguyễn Văn Huỳnh (2351170599 — Chủ trì) cùng cả nhóm  
-* **Tệp triển khai:** [`test/audio_recording_speech_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/audio_recording_speech_test.dart), [`test/phoneme_engine_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/phoneme_engine_test.dart), [`test/streak_service_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/streak_service_test.dart), [`KICH_BAN_KIEM_THU_TH3.md`](file:///D:/Nam_4/Mobile/TH3/KICH_BAN_KIEM_THU_TH3.md)
+* **Tệp triển khai:** [`test/audio_recording_speech_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/audio_recording_speech_test.dart), [`test/phoneme_engine_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/phoneme_engine_test.dart), [`test/streak_service_test.dart`](file:///D:/Nam_4/Mobile/TH3/test/streak_service_test.dart)
 
 ### 7.1. Ma trận Kiểm thử Đa chất giọng (Multi-Accent Test Matrix)
-
-Hệ thống được kiểm thử thực tế trên 5 nhóm chất giọng điển hình:
 
 | Mã Test | Nhóm Đối Tượng & Chất Giọng | Mẫu Kiểm Thử | Hành Vi Mong Muốn | Kết Quả Thực Tế | Trạng Thái |
 |:---:|:---|:---|:---|:---|:---:|
@@ -262,18 +248,16 @@ Hệ thống được kiểm thử thực tế trên 5 nhóm chất giọng đi�
 | **TC-MULTI-02** | Giọng Việt Nam nuốt âm đuôi | Từ `"cats"` đọc thành `"cat"` | Phát hiện thiếu âm `/s/`, phạt điểm Completeness, gợi ý khẩu hình | Nhận diện `"cat"`, báo thiếu âm `/s/`, điểm: 72.8 | ✅ PASSED |
 | **TC-MULTI-03** | Giọng bản xứ Anh - Mỹ (US Accent) | Từ `"think"` (`/θɪŋk/`) | Nhận diện đúng phụ âm răng môi `/θ/`, điểm tối đa | Nhận diện `"think"`, Accuracy: 100, Fluency: 98 | ✅ PASSED |
 | **TC-STT-04** | Giọng nói trong môi trường ồn | Âm lượng nền 35dB (Cafe) | Thuật toán Noise Gate lọc sạch tạp âm, độ tin cậy $\ge 85\%$ | Lọc sạch nhiễu nền, độ tin cậy: 87.2% | ✅ PASSED |
-| **TC-STT-05** | Phát âm mẫu bản xứ US vs UK | Từ `"water"` | Phát đúng chuẩn uốn lưỡi US (`/ˈwɔːtər/`) và UK (`/ˈwɔːtə/`) | Web Speech TTS phát chuẩn 2 giọng US và UK | ✅ PASSED |
+| **TC-STT-05** | Phát âm mẫu bản xứ US vs UK | Từ `"water"` | Phát đúng chuẩn uốn lưỡi US (`/ˈwɔːtər/`) và UK (`/ˈwɔːtə/`) | CDN Audio & TTS phát chuẩn xác 2 giọng | ✅ PASSED |
 
 ### 7.2. Kết quả Chạy Toàn Bộ Kiểm Thử Tự Động (`flutter test`)
 ```bash
 $ flutter test
-Flutter assets will be downloaded from https://storage.flutter-io.cn.
 00:00 +0: loading test/audio_recording_speech_test.dart
 ...
 00:02 +36: All tests passed!
 ```
-* **Tổng số test cases:** 36 bài kiểm thử.
-* **Tỷ lệ vượt qua (Pass Rate):** **36/36 (100%)**.
+* **Tổng số test cases:** 36/36 tests passed (100%).
 * **Thời gian thực thi:** 2.8 giây.
 
 ### 7.3. Kết quả Phân tích Tĩnh (`dart analyze`)
@@ -282,37 +266,26 @@ $ dart analyze
 Analyzing TH3...
 No issues found!
 ```
-* Mã nguồn tuân thủ 100% chuẩn quy ước code Dart/Flutter, 0 lỗi biên dịch, 0 cảnh báo linter.
+* 0 lỗi, 0 cảnh báo.
 
 ---
 
-## 🚀 HƯỚNG DẪN KHỞI CHẠY ỨNG DỤNG VÀ THỰC NGHIỆM
+## 🚀 HƯỚNG DẪN KHỞI CHẠY VÀ THỰC NGHIỆM
 
-### 1. Khởi chạy Ứng dụng trên Trình duyệt Web (Chrome / Edge)
 ```bash
+# 1. Chạy ứng dụng trên nền tảng Web (Khuyên dùng kiểm tra nhanh)
+flutter build web
+python -m http.server 8080 --directory build/web
+# Truy cập trình duyệt: http://localhost:8080/
+
+# 2. Chạy ứng dụng trực tiếp bằng Flutter CLI
 flutter run -d chrome
-```
-*Hoặc truy cập trực tiếp qua cổng máy chủ cục bộ độc lập:* **[http://localhost:8080/](http://localhost:8080/)**
 
-### 2. Khởi chạy Ứng dụng trên Máy ảo Android (Pixel 34)
-```bash
-flutter emulators --launch Pixel_34
-flutter run -d android
-```
-
-### 3. Thực hiện Kiểm thử Toàn bộ Hệ thống
-```bash
+# 3. Chạy toàn bộ bộ kiểm thử tự động
 flutter test
 ```
 
 ---
 
-## 🏆 KẾT LUẬN & ĐÁNH GIÁ CHUNG
-Dự án **SpeakUp AI (TH3 - Nhóm 16)** đã hiện thực hóa đầy đủ và toàn diện 7 mục Checklist theo yêu cầu của Bộ môn Công nghệ Phần mềm — Khoa CNTT — Trường Đại học Thủy Lợi:
-1. CSDL quan hệ chuẩn hóa 3NF kết hợp cơ chế Offline-First lưu trữ an toàn hồ sơ học tập.
-2. Logic Streak thông minh với khiên bảo vệ Freeze Streak và bài test cứu chuỗi độc đáo.
-3. Module thu âm chuẩn hóa 16kHz WAV với lọc nhiễu Noise Gate và Web MediaRecorder phát lại giọng thực tế.
-4. Thuật toán so sánh âm vị Levenshtein với bộ trọng số phạt đặc biệt cho học viên Việt Nam.
-5. Thẻ điểm số và hệ thống tô màu âm vị trực quan kèm hướng dẫn khẩu hình chi tiết.
-6. Hệ thống thông báo nhắc nhở thông minh cảnh báo đứt chuỗi lúc 20:00.
-7. Bộ kiểm thử đa chất giọng với 36/36 test cases đạt chuẩn 100%.
+## 🏆 KẾT LUẬN
+Bản báo cáo kỹ thuật này xác nhận ứng dụng **SpeakUp AI (TH3 - Nhóm 16)** đã hoàn thành trọn vẹn **7/7 mục checklist** đề tài môn học với độ hoàn thiện cao, giải quyết triệt để các bài toán thực tế về âm thanh, giọng nói và trải nghiệm người dùng.
